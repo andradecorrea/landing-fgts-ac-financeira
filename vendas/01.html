@@ -1,102 +1,82 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vendas - Vendedor 01</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #000;
-      color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-    .form-container {
-      background: #111;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(255,255,255,0.2);
-      width: 300px;
-      text-align: center;
-    }
-    h2 {
-      margin-bottom: 20px;
-      color: #FFD700;
-    }
-    input {
-      width: 90%;
-      padding: 10px;
-      margin: 10px 0;
-      border: none;
-      border-radius: 5px;
-    }
-    button {
-      background: red;
-      color: #fff;
-      padding: 10px;
-      width: 100%;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    button:hover {
-      background: darkred;
-    }
-    .msg {
-      margin-top: 10px;
-      font-size: 14px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulação FGTS - Vendedor 01</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h2 {
+            color: #FFD700;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+            background: #111;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+        input {
+            margin: 10px 0;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+        }
+        button {
+            background: red;
+            color: #fff;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background: darkred;
+        }
+    </style>
 </head>
 <body>
-  <div class="form-container">
-    <h2>Simule agora</h2>
-    <input type="text" id="nome" placeholder="Nome completo" required>
-    <input type="text" id="cpf" placeholder="CPF" required>
-    <input type="text" id="whatsapp" placeholder="WhatsApp com DDD" required>
-    <button onclick="enviarDados()">Enviar</button>
-    <div class="msg" id="msg"></div>
-  </div>
+    <h2>Preencha seus dados</h2>
+    <form id="leadForm">
+        <input type="text" id="nome" placeholder="Nome completo" required>
+        <input type="text" id="cpf" placeholder="CPF" required>
+        <input type="text" id="whatsapp" placeholder="WhatsApp com DDD" required>
+        <button type="submit">Enviar e ir para o WhatsApp</button>
+    </form>
 
-  <script>
-    function enviarDados() {
-      const nome = document.getElementById('nome').value;
-      const cpf = document.getElementById('cpf').value;
-      const whatsapp = document.getElementById('whatsapp').value;
+    <script>
+        const scriptURL = "https://script.google.com/macros/s/AKfycbwHskT_W7eYnKGdN8-SSVMH1euNbyvoSpmJ7DEzBmAcME6Obl1pLt_BLmdrcNRwXRo8rA/exec";
+        const form = document.getElementById('leadForm');
 
-      if (!nome || !cpf || !whatsapp) {
-        document.getElementById('msg').innerText = "Preencha todos os campos!";
-        return;
-      }
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            const nome = document.getElementById('nome').value;
+            const cpf = document.getElementById('cpf').value;
+            const whatsapp = document.getElementById('whatsapp').value;
 
-      const dados = {
-        nome: nome,
-        cpf: cpf,
-        whatsapp: whatsapp,
-        data: new Date().toISOString()
-      };
-
-      fetch("https://script.google.com/macros/s/AKfycbwHskT_W7eYnKGdN8-SSVMH1euNbyvoSpmJ7DEzBmAcME6Obl1pLt_BLmdrcNRwXRo8rA/exec", {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dados)
-      })
-      .then(() => {
-        document.getElementById('msg').innerText = "Enviado com sucesso!";
-        setTimeout(() => {
-          window.location.href = "https://wa.me/5548996852424?text=Ol%C3%A1!%20Gostaria%20de%20uma%20simula%C3%A7%C3%A3o%20referente%20ao%20resgate%20FGTS.";
-        }, 1000);
-      })
-      .catch(() => {
-        document.getElementById('msg').innerText = "Erro ao enviar os dados!";
-      });
-    }
-  </script>
+            fetch(scriptURL, {
+                method: 'POST',
+                body: JSON.stringify({ nome, cpf, whatsapp }),
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(() => {
+                window.location.href = "https://wa.me/5548996852424?text=Ol%C3%A1!%20Gostaria%20de%20uma%20simula%C3%A7%C3%A3o%20referente%20ao%20resgate%20FGTS.";
+            })
+            .catch(error => alert('Erro ao enviar os dados!'));
+        });
+    </script>
 </body>
 </html>
