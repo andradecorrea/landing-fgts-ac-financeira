@@ -1,36 +1,85 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Simulação FGTS - Vendedor 01</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simulação FGTS – Marina</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: Arial, sans-serif; background: #000; color: #fff; text-align: center; padding: 40px; }
-    form { background: #111; padding: 20px; border-radius: 10px; display: inline-block; }
-    input { display: block; margin: 10px auto; padding: 10px; width: 80%; border-radius: 5px; border: none; }
-    button { background: red; color: #fff; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; }
-    button:hover { background: darkred; }
-    .msg { margin-top: 15px; font-size: 14px; color: yellow; }
+    :root {
+      --bg: #121212;
+      --text: #ffffff;
+      --muted: #b8b8b8;
+      --card: #1c1c1c;
+      --input: #2c2c2c;
+      --brand: #ffd700;
+      --brand-hover: #e6c200;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: var(--bg); color: var(--text);
+    }
+    .wrap {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px;
+    }
+    .card {
+      width: 100%; max-width: 480px; background: var(--card); border-radius: var(--radius);
+      padding: 28px; box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    .logo { display: block; margin: 0 auto 18px auto; max-width: 180px; }
+    h1 {
+      font-size: 1.4rem; text-align: center; margin: 0 0 18px 0; font-weight: 700;
+    }
+    form { display: grid; gap: 12px; }
+    input {
+      width: 100%; padding: 14px 16px; border-radius: 10px; border: 1px solid #2a2a2a;
+      background: var(--input); color: var(--text); outline: none; font-size: 1rem;
+    }
+    input::placeholder { color: #9a9a9a; }
+    button {
+      margin-top: 4px;
+      width: 100%; padding: 14px 16px; border-radius: 12px; border: none; cursor: pointer;
+      background: var(--brand); color: #000; font-weight: 700; font-size: 1rem;
+      transition: transform .04s ease, background .2s ease;
+    }
+    button:hover { background: var(--brand-hover); }
+    button:active { transform: translateY(1px); }
+    .msg { margin-top: 10px; min-height: 20px; text-align: center; font-size: .95rem; color: var(--muted); }
+    .foot { margin-top: 16px; text-align: center; font-size: .8rem; color: var(--muted); }
   </style>
 </head>
 <body>
-  <h1>Solicite sua Simulação do FGTS</h1>
-  <form id="leadForm">
-    <input type="text" name="nome" placeholder="Nome completo" required>
-    <input type="text" name="cpf" placeholder="CPF" required>
-    <input type="text" name="whatsapp" placeholder="WhatsApp com DDD" required>
-    <button type="submit">Enviar</button>
-    <div class="msg" id="msg"></div>
-  </form>
+  <div class="wrap">
+    <div class="card">
+      <img class="logo" src="/logo-ac-financeira.png" alt="AC Financeira" />
+      <h1>Solicite sua Simulação do FGTS</h1>
+
+      <form id="leadForm">
+        <input type="text" name="nome" placeholder="Nome completo" required />
+        <input type="text" name="cpf" placeholder="CPF" required />
+        <input type="tel" name="whatsapp" placeholder="WhatsApp com DDD" required />
+        <button type="submit">Enviar</button>
+        <div id="msg" class="msg"></div>
+      </form>
+
+      <div class="foot">Ao enviar, você autoriza contato para prosseguir com sua simulação de FGTS.</div>
+    </div>
+  </div>
 
   <script>
     document.getElementById('leadForm').addEventListener('submit', async function(e) {
       e.preventDefault();
-      const form = e.target;
+      const formData = new FormData(e.target);
       const data = {
-        nome: form.nome.value,
-        cpf: form.cpf.value,
-        whatsapp: form.whatsapp.value
+        nome: formData.get('nome').trim(),
+        cpf: formData.get('cpf').trim(),
+        whatsapp: formData.get('whatsapp').trim(),
+        origem: 'Marina'
       };
 
       document.getElementById('msg').textContent = 'Enviando...';
@@ -50,8 +99,8 @@
           window.location.href = `https://wa.me/${telefone}?text=${mensagem}`;
         }, 800);
 
-      } catch (error) {
-        document.getElementById('msg').textContent = 'Erro ao enviar os dados!';
+      } catch (err) {
+        document.getElementById('msg').textContent = 'Erro ao enviar os dados. Tente novamente.';
       }
     });
   </script>
