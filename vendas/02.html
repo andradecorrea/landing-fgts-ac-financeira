@@ -1,21 +1,107 @@
-import shutil
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simulação FGTS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #121212;
+      --text: #ffffff;
+      --muted: #b8b8b8;
+      --card: #1c1c1c;
+      --input: #2c2c2c;
+      --brand: #ffd700;
+      --brand-hover: #e6c200;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: var(--bg); color: var(--text);
+    }
+    .wrap {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px;
+    }
+    .card {
+      width: 100%; max-width: 480px; background: var(--card); border-radius: var(--radius);
+      padding: 28px; box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    .logo { display: block; margin: 0 auto 18px auto; max-width: 180px; }
+    h1 {
+      font-size: 1.4rem; text-align: center; margin: 0 0 18px 0; font-weight: 700;
+    }
+    form { display: grid; gap: 12px; }
+    input {
+      width: 100%; padding: 14px 16px; border-radius: 10px; border: 1px solid #2a2a2a;
+      background: var(--input); color: var(--text); outline: none; font-size: 1rem;
+    }
+    input::placeholder { color: #9a9a9a; }
+    button {
+      margin-top: 4px;
+      width: 100%; padding: 14px 16px; border-radius: 12px; border: none; cursor: pointer;
+      background: var(--brand); color: #000; font-weight: 700; font-size: 1rem;
+      transition: transform .04s ease, background .2s ease;
+    }
+    button:hover { background: var(--brand-hover); }
+    button:active { transform: translateY(1px); }
+    .msg { margin-top: 10px; min-height: 20px; text-align: center; font-size: .95rem; color: var(--muted); }
+    .foot { margin-top: 16px; text-align: center; font-size: .8rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <img class="logo" src="/logo-ac-financeira.png" alt="AC Financeira" />
+      <h1>Solicite sua Simulação do FGTS</h1>
 
-# Caminhos dos arquivos
-vendas_dir = os.path.join(extract_path, 'landing-fgts-ac-financeira-main', 'vendas')
-orig_file = os.path.join(vendas_dir, '01.html')
-new_file = os.path.join(vendas_dir, '02.html')
+      <form id="leadForm">
+        <input type="text" name="nome" placeholder="Nome completo" required />
+        <input type="text" name="cpf" placeholder="CPF" required />
+        <input type="tel" name="whatsapp" placeholder="WhatsApp com DDD" required />
+        <button type="submit">Enviar</button>
+        <div id="msg" class="msg"></div>
+      </form>
 
-# Copiar conteúdo do 01.html para 02.html
-shutil.copyfile(orig_file, new_file)
+      <div class="foot">Ao enviar, você autoriza contato para prosseguir com sua simulação de FGTS.</div>
+    </div>
+  </div>
 
-# Alterar apenas o número do telefone no novo arquivo
-with open(new_file, 'r', encoding='utf-8') as f:
-    content = f.read()
+  <script>
+    document.getElementById('leadForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const data = {
+        nome: formData.get('nome').trim(),
+        cpf: formData.get('cpf').trim(),
+        whatsapp: formData.get('whatsapp').trim()
+      };
 
-# Substituir telefone do WhatsApp
-content = content.replace('5548996852424', '5548992085738')
+      document.getElementById('msg').textContent = 'Enviando...';
 
-with open(new_file, 'w', encoding='utf-8') as f:
-    f.write(content)
+      try {
+        await fetch('https://script.google.com/macros/s/AKfycbwHskT_W7eYnKGdN8-SSVMH1euNbyvoSpmJ7DEzBmAcME6Obl1pLt_BLmdrcNRwXRo8rA/exec', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
 
-new_file
+        document.getElementById('msg').textContent = 'Dados enviados com sucesso! Redirecionando...';
+
+        setTimeout(() => {
+          const telefone = '5548992085738';
+          const mensagem = encodeURIComponent('Olá! Gostaria de uma simulação referente ao resgate FGTS.');
+          window.location.href = `https://wa.me/${telefone}?text=${mensagem}`;
+        }, 800);
+
+      } catch (err) {
+        document.getElementById('msg').textContent = 'Erro ao enviar os dados. Tente novamente.';
+      }
+    });
+  </script>
+</body>
+</html>
