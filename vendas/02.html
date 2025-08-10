@@ -1,8 +1,21 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url='https://wa.me/5548992085738?text=Ol%C3%A1!%20Gostaria%20de%20uma%20simula%C3%A7%C3%A3o%20referente%20ao%20resgate%20FGTS.'" />
-</head>
-<body></body>
-</html>
+import shutil
+
+# Caminhos dos arquivos
+vendas_dir = os.path.join(extract_path, 'landing-fgts-ac-financeira-main', 'vendas')
+orig_file = os.path.join(vendas_dir, '01.html')
+new_file = os.path.join(vendas_dir, '02.html')
+
+# Copiar conteúdo do 01.html para 02.html
+shutil.copyfile(orig_file, new_file)
+
+# Alterar apenas o número do telefone no novo arquivo
+with open(new_file, 'r', encoding='utf-8') as f:
+    content = f.read()
+
+# Substituir telefone do WhatsApp
+content = content.replace('5548996852424', '5548992085738')
+
+with open(new_file, 'w', encoding='utf-8') as f:
+    f.write(content)
+
+new_file
