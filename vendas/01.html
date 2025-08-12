@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Simulação FGTS</title>
+  <title>Simulação Crédito do Trabalhador</title>
   <style>
     /* Blindagem básica */
     * { box-sizing: border-box; }
@@ -40,7 +40,7 @@
     <!-- Caminho relativo à pasta /vendas/ -->
     <img class="logo" src="../logo-ac-financeira.png" alt="AC Promotora"
          style="max-width:160px;width:160px;height:auto;display:block;margin:0 auto 14px;" />
-    <h2>Solicite sua Simulação do FGTS</h2>
+    <h2>Solicite sua Simulação Crédito do Trabalhador</h2>
 
     <form id="form">
       <input type="text" name="nome" placeholder="Nome completo" required />
@@ -78,7 +78,7 @@
 
         msg.textContent = 'Dados enviados com sucesso! Redirecionando...';
         setTimeout(() => {
-          const texto = encodeURIComponent('Olá! Gostaria de uma simulação referente ao resgate FGTS.');
+          const texto = encodeURIComponent('Olá! Gostaria de uma simulação referente ao resgate Crédito do Trabalhador.');
           window.location.href = `https://wa.me/${TELEFONE}?text=${texto}`;
         }, 600);
 
