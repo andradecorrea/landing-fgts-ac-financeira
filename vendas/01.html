@@ -1,102 +1,70 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Solicite sua Simulação do FGTS</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simulação FGTS</title>
   <style>
-    body {
-      background-color: #121212;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      color: white;
-    }
-    .container {
-      background-color: #1e1e1e;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-      width: 300px;
-      text-align: center;
-    }
-    img {
-      max-width: 100px;
-      margin-bottom: 15px;
-    }
-    input {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-      border: none;
-      border-radius: 5px;
-    }
-    button {
-      background-color: #FFD700;
-      color: black;
-      border: none;
-      padding: 10px;
-      width: 100%;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    button:hover {
-      background-color: #e6c200;
-    }
-    .msg {
-      margin-top: 10px;
-      font-size: 14px;
-      color: #ff6666;
-    }
+    body { background:#121212; font-family: Arial, sans-serif; margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center; color:#fff; }
+    .card { width:100%; max-width: 420px; background:#1e1e1e; padding:22px; border-radius:12px; box-shadow:0 8px 30px rgba(0,0,0,.4); text-align:center; }
+    .logo { max-width:160px; display:block; margin:0 auto 14px auto; }
+    h2 { margin:8px 0 18px 0; }
+    input { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:none; background:#2b2b2b; color:#eaeaea; }
+    button { width:100%; padding:12px; border:none; border-radius:8px; background:#FFD700; color:#000; font-weight:bold; cursor:pointer; }
+    button:hover { background:#e6c200; }
+    .msg { margin-top:10px; font-size:13px; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <img src="logo.png" alt="Logo AC Promotora">
+  <div class="card">
+    <img class="logo" src="../logo-ac-financeira.png" alt="AC Promotora" />
     <h2>Solicite sua Simulação do FGTS</h2>
-    <input type="text" id="nome" placeholder="Nome Completo" required>
-    <input type="text" id="cpf" placeholder="CPF" required>
-    <input type="text" id="whatsapp" placeholder="WhatsApp" required>
-    <button onclick="enviar()">Enviar</button>
-    <div class="msg" id="msg"></div>
+
+    <form id="form">
+      <input type="text" name="nome" placeholder="Nome completo" required />
+      <input type="text" name="cpf" placeholder="CPF" required />
+      <input type="text" name="whatsapp" placeholder="WhatsApp com DDD" required />
+      <button type="submit">Enviar</button>
+      <div id="msg" class="msg"></div>
+    </form>
   </div>
 
   <script>
-    function enviar() {
-      const nome = document.getElementById('nome').value;
-      const cpf = document.getElementById('cpf').value;
-      const whatsapp = document.getElementById('whatsapp').value;
+    const ENDPOINT = "https://script.google.com/macros/s/AKfycby8xE-M8wIeCl3ymHBZR1wcZQ1TvlGisoeDdZD_K11G-X2IhVeJd0E3LEU5RaCBA5i80A/exec";
+    const TELEFONE = "5548996852424";
+
+    document.getElementById('form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const data = {
+        nome: (fd.get('nome') || '').trim(),
+        cpf: (fd.get('cpf') || '').trim(),
+        whatsapp: (fd.get('whatsapp') || '').trim()
+      };
+
       const msg = document.getElementById('msg');
+      msg.style.color = '#9adf9a';
+      msg.textContent = 'Enviando...';
 
-      if (!nome || !cpf || !whatsapp) {
-        msg.textContent = "Preencha todos os campos.";
-        return;
+      try {
+        await fetch(ENDPOINT, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        msg.textContent = 'Dados enviados com sucesso! Redirecionando...';
+        setTimeout(() => {
+          const texto = encodeURIComponent('Olá! Gostaria de uma simulação referente ao resgate FGTS.');
+          window.location.href = `https://wa.me/${TELEFONE}?text=${texto}`;
+        }, 600);
+
+      } catch (err) {
+        msg.style.color = '#ff6b6b';
+        msg.textContent = 'Erro ao enviar os dados. Tente novamente.';
       }
-
-      fetch("https://script.google.com/macros/s/AKfycby8xE-M8wIeCl3ymHBZR1wcZQ1TvlGisoeDdZD_K11G-X2IhVeJd0E3LEU5RaCBA5i80A/exec", {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nome: nome,
-          cpf: cpf,
-          whatsapp: whatsapp,
-          origem: "Formulário FGTS"
-        })
-      })
-      .then(() => {
-        msg.style.color = "lightgreen";
-        msg.textContent = "Dados enviados com sucesso!";
-      })
-      .catch(() => {
-        msg.style.color = "red";
-        msg.textContent = "Erro ao enviar os dados. Tente novamente.";
-      });
-    }
+    });
   </script>
 </body>
 </html>
