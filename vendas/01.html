@@ -1,30 +1,45 @@
-from pathlib import Path
-
-# Novo endpoint informado pelo usuário
-endpoint = "https://script.google.com/macros/s/AKfycbzBNDWnMtnoK23F-IcTKTfmG_s8miPcOVKPqIMaiq6m_zWCMdnK87HXe8h5FJHVzVHR_Q/exec"
-telefone_marina = "5548996852424"
-
-# HTML atualizado
-html = f"""<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Simulação FGTS</title>
   <style>
-    body {{ background:#121212; font-family: Arial, sans-serif; margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center; color:#fff; }}
-    .card {{ width:100%; max-width: 420px; background:#1e1e1e; padding:22px; border-radius:12px; box-shadow:0 8px 30px rgba(0,0,0,.4); text-align:center; }}
-    .logo {{ max-width:160px; display:block; margin:0 auto 14px auto; }}
-    h2 {{ margin:8px 0 18px 0; }}
-    input {{ width:100%; padding:12px; margin:8px 0; border-radius:8px; border:none; background:#2b2b2b; color:#eaeaea; }}
-    button {{ width:100%; padding:12px; border:none; border-radius:8px; background:#FFD700; color:#000; font-weight:bold; cursor:pointer; }}
-    button:hover {{ background:#e6c200; }}
-    .msg {{ margin-top:10px; font-size:13px; }}
+    /* Blindagem básica */
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      background:#121212; color:#fff; font-family: Arial, sans-serif;
+      display:flex; align-items:center; justify-content:center; padding: 16px;
+    }
+    .card {
+      width: 100%; max-width: 420px;
+      background:#1e1e1e; padding:22px; border-radius:12px;
+      box-shadow:0 8px 30px rgba(0,0,0,.4); text-align:center;
+    }
+    /* Força tamanho da logo contra CSS global */
+    .logo { 
+      display:block !important; margin:0 auto 14px auto !important;
+      max-width:160px !important; width:160px !important; height:auto !important;
+    }
+    h2 { margin:8px 0 18px 0; font-size:22px; }
+    input {
+      width:100%; padding:12px; margin:8px 0; border-radius:8px; border:none;
+      background:#2b2b2b; color:#eaeaea; font-size:16px;
+    }
+    button {
+      width:100%; padding:12px; border:none; border-radius:8px;
+      background:#FFD700; color:#000; font-weight:bold; cursor:pointer; font-size:16px;
+    }
+    button:hover { background:#e6c200; }
+    .msg { margin-top:10px; font-size:13px; min-height:18px; }
   </style>
 </head>
 <body>
   <div class="card">
-    <img class="logo" src="../logo-ac-financeira.png" alt="AC Promotora" />
+    <!-- Caminho relativo à pasta /vendas/ -->
+    <img class="logo" src="../logo-ac-financeira.png" alt="AC Promotora"
+         style="max-width:160px;width:160px;height:auto;display:block;margin:0 auto 14px;" />
     <h2>Solicite sua Simulação do FGTS</h2>
 
     <form id="form">
@@ -37,49 +52,41 @@ html = f"""<!DOCTYPE html>
   </div>
 
   <script>
-    const ENDPOINT = "{endpoint}";
-    const TELEFONE = "{telefone_marina}";
+    const ENDPOINT = "https://script.google.com/macros/s/AKfycbzBNDWnMtnoK23F-IcTKTfmG_s8miPcOVKPqIMaiq6m_zWCMdnK87HXe8h5FJHVzVHR_Q/exec";
+    const TELEFONE = "5548996852424"; // Marina
 
-    document.getElementById('form').addEventListener('submit', async (e) => {{
+    document.getElementById('form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const fd = new FormData(e.target);
-      const data = {{
+      const data = {
         nome: (fd.get('nome') || '').trim(),
         cpf: (fd.get('cpf') || '').trim(),
         whatsapp: (fd.get('whatsapp') || '').trim()
-      }};
+      };
 
       const msg = document.getElementById('msg');
       msg.style.color = '#9adf9a';
       msg.textContent = 'Enviando...';
 
-      try {{
-        await fetch(ENDPOINT, {{
+      try {
+        await fetch(ENDPOINT, {
           method: 'POST',
           mode: 'no-cors',
-          headers: {{ 'Content-Type': 'application/json' }},
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
-        }});
+        });
 
         msg.textContent = 'Dados enviados com sucesso! Redirecionando...';
-        setTimeout(() => {{
+        setTimeout(() => {
           const texto = encodeURIComponent('Olá! Gostaria de uma simulação referente ao resgate FGTS.');
-          window.location.href = `https://wa.me/{telefone_marina}?text=${{texto}}`;
-        }}, 600);
+          window.location.href = `https://wa.me/${TELEFONE}?text=${texto}`;
+        }, 600);
 
-      }} catch (err) {{
+      } catch (err) {
         msg.style.color = '#ff6b6b';
         msg.textContent = 'Erro ao enviar os dados. Tente novamente.';
-      }}
-    }});
+      }
+    });
   </script>
 </body>
-</html>"""
-
-# Salvar no diretório de entrega
-out_dir = Path("/mnt/data/entrega_vendas01")
-out_dir.mkdir(exist_ok=True)
-file_path = out_dir / "01.html"
-file_path.write_text(html, encoding="utf-8")
-
-file_path
+</html>
